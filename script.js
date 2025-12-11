@@ -1,5 +1,6 @@
 const CONFIG = {
     BASE_URL: '/api',
+    GEO_URL: 'http://api.openweathermap.org/geo/1.0',
     DEFAULT_LOCATION: { city: 'Benin City', country: 'NG', lat: 6.335, lon: 5.627 },
     DEFAULT_UNITS: { temp: 'celsius', speed: 'kmh' },
     CACHE_DURATION: {
@@ -174,7 +175,9 @@ function loadSavedData() {
     try {
         const savedSettings = localStorage.getItem('weatherVerse_settings');
         if (savedSettings) {
-            state.settings = { ...state.settings, ...JSON.parse(savedSettings) };
+            const parsedSettings = JSON.parse(savedSettings);
+           
+            state.settings = { ...state.settings, ...parsedSettings };
         }
         
         const savedFavorites = localStorage.getItem('weatherVerse_favorites');
@@ -959,11 +962,14 @@ async function handleSearchInput() {
     }
     
     try {
-        const apiKey = state.settings.apiKey || CONFIG.API_KEY;
-        const url = `${CONFIG.GEO_URL}/direct?q=${encodeURIComponent(query)}&limit=5&appid=${apiKey}`;
+       
+        const url = `${CONFIG.BASE_URL}/geocode?q=${encodeURIComponent(query)}`;
         
         const response = await fetch(url);
-        if (!response.ok) return;
+        if (!response.ok) {
+            console.error('Search API error:', response.status);
+            return;
+        }
         
         const data = await response.json();
         
@@ -980,8 +986,8 @@ async function handleSearchInput() {
                 <div class="search-result-item" data-lat="${location.lat}" data-lon="${location.lon}">
                     <i class="fas fa-map-marker-alt search-result-icon"></i>
                     <div>
-                        <div>${location.name}</div>
-                        <small>${location.country}</small>
+                        <div>${location.name}, ${location.country}</div>
+                        <small>${location.state || ''}</small>
                     </div>
                 </div>
             `;
@@ -1002,6 +1008,8 @@ async function handleSearchInput() {
         
     } catch (error) {
         console.error('Search error:', error);
+        elements.searchResults.innerHTML = '<div class="search-result-item">Search temporarily unavailable</div>';
+        elements.searchResults.style.display = 'block';
     }
 }
 
