@@ -728,33 +728,34 @@ function updateBackground() {
     const condition = state.currentWeather.weather.main;
     const hour = new Date().getHours();
     const isNight = hour < 6 || hour > 18;
-    let gradient = '';
+    
+    let gradientVar = '--partly-cloudy-gradient'; // Default
     
     switch (WEATHER_CONDITIONS[condition] || 'partly-cloudy') {
         case 'sunny':
-            gradient = isNight ? 'linear-gradient(135deg, #1e293b, #0f172a, #020617)' : 'linear-gradient(135deg, #60a5fa, #22d3ee, #fbbf24)';
+            gradientVar = isNight ? '--night-gradient' : '--sunny-gradient';
             break;
         case 'cloudy':
-            gradient = 'linear-gradient(135deg, #9ca3af, #6b7280, #4b5563)';
+            gradientVar = '--cloudy-gradient';
             break;
         case 'rainy':
-            gradient = 'linear-gradient(135deg, #4b5563, #3b82f6, #1d4ed8)';
+            gradientVar = '--rainy-gradient';
             break;
         case 'storm':
-            gradient = 'linear-gradient(135deg, #374151, #7c3aed, #000000)';
+            gradientVar = '--storm-gradient';
             break;
         case 'snow':
-            gradient = 'linear-gradient(135deg, #dbeafe, #e5e7eb, #ffffff)';
+            gradientVar = '--snow-gradient';
             break;
         case 'fog':
-            gradient = 'linear-gradient(135deg, #9ca3af, #d1d5db, #f3f4f6)';
+            gradientVar = '--fog-gradient';
             break;
         default:
-            gradient = isNight ? 'linear-gradient(135deg, #1e293b, #0f172a, #020617)' : 'linear-gradient(135deg, #60a5fa, #93c5fd, #d1d5db)';
+            gradientVar = isNight ? '--night-gradient' : '--partly-cloudy-gradient';
     }
     
-    document.body.style.background = gradient;
-}
+    document.body.style.setProperty('background', `var(${gradientVar})`);
+        }
 
 function updateWeatherElements() {
     if (!state.currentWeather || !state.settings.animations) return;
