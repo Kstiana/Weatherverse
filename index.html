@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherVerse - Ultimate Weather App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#60a5fa">
+    <meta name="description" content="Real-time weather forecasts, air quality, UV index, and weather alerts worldwide">
+</head>
+<body>
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-icon">
+                <i class="fas fa-cloud-sun"></i>
+            </div>
+            <h2 class="loading-text">Loading Weather Data...</h2>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="weather-elements" id="weatherElements"></div>
+
+    <header>
+        <div class="header-container">
+            <div class="header-top">
+                <div class="logo-container">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="logo-icon" aria-hidden="true">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1 class="logo-title">WeatherVerse</h1>
+                        <div class="logo-subtitle">Real-time Weather</div>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <div class="unit-toggle">
+                        <button class="temp-unit-btn" id="tempUnitBtn" aria-label="Switch temperature unit">°C</button>
+                        <button class="unit-btn" id="speedUnitBtn" aria-label="Switch speed unit">km/h</button>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="refresh-btn" id="refreshBtn" aria-label="Refresh weather">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button class="share-btn" id="shareBtn" aria-label="Share weather">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                        <button class="settings-btn" id="settingsBtn" aria-label="Open settings">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="Search for a city or location..."
+                    aria-label="Search location"
+                    autocomplete="off"
+                >
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+            <div class="recent-searches" id="recentSearches"></div>
+        </div>
+    </header>
+
+    <div id="mobileMenu" class="mobile-menu">
+        <div class="mobile-menu-header">
+            <h2>Menu</h2>
+            <button class="close-menu-btn" id="closeMenuBtn" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-menu-content">
+            <button class="mobile-menu-item" id="mobileFavoritesBtn">
+                <i class="fas fa-star"></i>
+                <span>Favorites</span>
+            </button>
+            <button class="mobile-menu-item" id="mobileAlertsBtn">
+                <i class="fas fa-bell"></i>
+                <span>Weather Alerts</span>
+                <span class="badge" id="alertsBadge">0</span>
+            </button>
+            <button class="mobile-menu-item" id="mobileSettingsBtn">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </button>
+            <button class="mobile-menu-item" id="mobileAboutBtn">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </button>
+        </div>
+    </div>
+
+    <main>
+        <section class="current-weather" aria-labelledby="currentWeatherTitle">
+            <div class="current-weather-header">
+                <div class="location-container">
+                    <button class="location-btn" id="locationBtn" aria-label="Use current location">
+                        <i class="fas fa-location-arrow"></i>
+                    </button>
+                    <h2 class="location-name" id="locationName">Loading...</h2>
+                    <button class="favorite-btn" id="favoriteBtn" aria-label="Add to favorites">
+                        <i class="fas fa-star" id="favoriteIcon"></i>
+                    </button>
+                </div>
+                <div class="last-updated" id="lastUpdated"></div>
+            </div>
+
+            <div class="weather-display">
+                <div class="weather-icon-large" id="weatherIconLarge" aria-hidden="true">
+                    <i class="fas fa-cloud-sun"></i>
+                </div>
+                <div class="temperature-container">
+                    <div class="temperature-display" id="temperatureDisplay">--°</div>
+                    <div class="weather-condition" id="weatherCondition">--</div>
+                    <div class="feels-like" id="feelsLike">Feels like --°</div>
+                </div>
+            </div>
+
+            <div class="weather-stats">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-wind"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">Wind</div>
+                        <div class="stat-value" id="windSpeed">-- km/h</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-tint"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">Humidity</div>
+                        <div class="stat-value" id="humidity">--%</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-compress-alt"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">Pressure</div>
+                        <div class="stat-value" id="pressure">-- hPa</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-eye"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">Visibility</div>
+                        <div class="stat-value" id="visibility">-- km</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="weather-alerts" id="weatherAlerts"></div>
+
+        <div class="weather-grid">
+            <div class="grid-column">
+                <div class="weather-card">
+                    <div class="card-header">
+                        <i class="fas fa-clock card-icon"></i>
+                        <h3 class="card-title">24-Hour Forecast</h3>
+                    </div>
+                    <div class="hourly-forecast-container">
+                        <div class="hourly-forecast" id="hourlyForecast"></div>
+                    </div>
+                </div>
+
+                <div class="weather-card">
+                    <div class="card-header">
+                        <i class="fas fa-calendar-alt card-icon"></i>
+                        <h3 class="card-title">5-Day Forecast</h3>
+                    </div>
+                    <div class="daily-forecast" id="dailyForecast"></div>
+                </div>
+            </div>
+
+            <div class="grid-column">
+                <div class="weather-card">
+                    <div class="card-header">
+                        <i class="fas fa-sun card-icon"></i>
+                        <h3 class="card-title">Sun & Moon</h3>
+                    </div>
+                    <div class="sun-moon-container">
+                        <div class="sun-moon-item">
+                            <div class="sun-moon-icon sunrise"><i class="fas fa-sunrise"></i></div>
+                            <div class="sun-moon-info">
+                                <div class="sun-moon-label">Sunrise</div>
+                                <div class="sun-moon-value" id="sunriseTime">--:--</div>
+                            </div>
+                        </div>
+                        <div class="sun-moon-item">
+                            <div class="sun-moon-icon sunset"><i class="fas fa-sunset"></i></div>
+                            <div class="sun-moon-info">
+                                <div class="sun-moon-label">Sunset</div>
+                                <div class="sun-moon-value" id="sunsetTime">--:--</div>
+                            </div>
+                        </div>
+                        <div class="sun-moon-progress">
+                            <div class="progress-label">
+                                <span>Day Progress</span>
+                                <span id="dayProgress">--%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="dayProgressBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weather-card">
+                    <div class="card-header">
+                        <i class="fas fa-wind card-icon"></i>
+                        <h3 class="card-title">Air Quality & UV</h3>
+                    </div>
+                    <div class="aqi-uv-container">
+                        <div class="aqi-item">
+                            <div class="aqi-header">
+                                <div class="aqi-label">Air Quality Index</div>
+                                <div class="aqi-value" id="aqiValue">--</div>
+                            </div>
+                            <div class="aqi-bar">
+                                <div class="aqi-segments">
+                                    <div class="aqi-segment good" title="Good"></div>
+                                    <div class="aqi-segment moderate" title="Moderate"></div>
+                                    <div class="aqi-segment unhealthy-sensitive" title="Unhealthy for Sensitive Groups"></div>
+                                    <div class="aqi-segment unhealthy" title="Unhealthy"></div>
+                                    <div class="aqi-segment very-unhealthy" title="Very Unhealthy"></div>
+                                    <div class="aqi-segment hazardous" title="Hazardous"></div>
+                                </div>
+                                <div class="aqi-indicator" id="aqiIndicator"></div>
+                            </div>
+                            <div class="aqi-recommendation" id="aqiRecommendation"></div>
+                        </div>
+                        <div class="uv-item">
+                            <div class="uv-header">
+                                <div class="uv-label">UV Index</div>
+                                <div class="uv-value" id="uvValue">--</div>
+                            </div>
+                            <div class="uv-bar">
+                                <div class="uv-segments">
+                                    <div class="uv-segment low" title="Low"></div>
+                                    <div class="uv-segment moderate" title="Moderate"></div>
+                                    <div class="uv-segment high" title="High"></div>
+                                    <div class="uv-segment very-high" title="Very High"></div>
+                                    <div class="uv-segment extreme" title="Extreme"></div>
+                                </div>
+                                <div class="uv-indicator" id="uvIndicator"></div>
+                            </div>
+                            <div class="uv-recommendation" id="uvRecommendation"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="weather-card">
+                    <div class="card-header">
+                        <i class="fas fa-info-circle card-icon"></i>
+                        <h3 class="card-title">Weather Details</h3>
+                    </div>
+                    <div class="weather-details" id="weatherDetails"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="weather-card favorites-card">
+            <div class="card-header">
+                <i class="fas fa-star card-icon"></i>
+                <h3 class="card-title">Favorite Locations</h3>
+                <button class="edit-favorites-btn" id="editFavoritesBtn" aria-label="Edit favorites">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+            <div class="favorites-container" id="favoritesContainer"></div>
+        </div>
+
+        <div class="weather-card insights-card">
+            <div class="card-header">
+                <i class="fas fa-lightbulb card-icon"></i>
+                <h3 class="card-title">Weather Insights</h3>
+            </div>
+            <div class="insights-content" id="insightsContent"></div>
+        </div>
+    </main>
+
+    <div id="settingsModal" class="modal" role="dialog" aria-labelledby="settingsTitle" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="settingsTitle">Settings</h2>
+                <button class="modal-close" id="settingsClose" aria-label="Close settings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <h3>Units</h3>
+                    <div class="setting-item">
+                        <label>
+                            <input type="radio" name="tempUnit" value="celsius" checked>
+                            Celsius (°C)
+                        </label>
+                        <label>
+                            <input type="radio" name="tempUnit" value="fahrenheit">
+                            Fahrenheit (°F)
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="radio" name="speedUnit" value="kmh" checked>
+                            km/h
+                        </label>
+                        <label>
+                            <input type="radio" name="speedUnit" value="mph">
+                            mph
+                        </label>
+                    </div>
+                </div>
+                <div class="setting-group">
+                    <h3>Display</h3>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="animationsToggle" checked>
+                            Weather Animations
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="autoRefreshToggle" checked>
+                            Auto-refresh (15 min)
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="notificationsToggle">
+                            Weather Alerts Notifications
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="saveSettingsBtn">Save Settings</button>
+                <button class="btn-secondary" id="resetSettingsBtn">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="aboutModal" class="modal" role="dialog" aria-labelledby="aboutTitle" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="aboutTitle">About WeatherVerse</h2>
+                <button class="modal-close" id="aboutClose" aria-label="Close about">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>WeatherVerse provides real-time weather data, forecasts, air quality, and UV index information worldwide.</p>
+                <p>Features include:</p>
+                <ul>
+                    <li>Current weather conditions</li>
+                    <li>5-day weather forecast</li>
+                    <li>Hourly weather predictions</li>
+                    <li>Air Quality Index (AQI)</li>
+                    <li>UV Index with recommendations</li>
+                    <li>Sunrise/sunset times</li>
+                    <li>Weather alerts</li>
+                    <li>Favorite locations</li>
+                </ul>
+                <p>Data powered by OpenWeatherMap API</p>
+                <p>Version 1.0.0</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification" aria-live="assertive"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
