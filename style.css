@@ -11,7 +11,7 @@
     --cloudy-gradient: linear-gradient(135deg, #9ca3af, #6b7280, #4b5563);
     --rainy-gradient: linear-gradient(135deg, #4b5563, #3b82f6, #1d4ed8);
     --storm-gradient: linear-gradient(135deg, #374151, #7c3aed, #000000);
-    --snow-gradient: linear-gradient(135deg, #dbeafe, #e5e7eb, #ffffff);
+    --snow-gradient: linear-gradient(135deg, #64748b, #64748b, #64748b);
     --fog-gradient: linear-gradient(135deg, #9ca3af, #9ca3af, #9ca3af);
     --night-gradient: linear-gradient(135deg, #1e293b, #0f172a, #020617);
     
