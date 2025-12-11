@@ -175,9 +175,7 @@ function loadSavedData() {
     try {
         const savedSettings = localStorage.getItem('weatherVerse_settings');
         if (savedSettings) {
-            const parsedSettings = JSON.parse(savedSettings);
-           
-            state.settings = { ...state.settings, ...parsedSettings };
+            state.settings = { ...state.settings, ...JSON.parse(savedSettings) };
         }
         
         const savedFavorites = localStorage.getItem('weatherVerse_favorites');
@@ -232,7 +230,7 @@ function applySettings() {
     document.getElementById('animationsToggle').checked = state.settings.animations;
     document.getElementById('autoRefreshToggle').checked = state.settings.autoRefresh;
     document.getElementById('notificationsToggle').checked = state.settings.notifications;
-    
+     
 }
 
 function setupEventListeners() {
