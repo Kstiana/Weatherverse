@@ -24,55 +24,33 @@ export default async function handler(req, res) {
         const apiKey = process.env.OPENWEATHER_API_KEY;
         
         if (!apiKey) {
-            console.error('OPENWEATHER_API_KEY is not set in environment variables');
             return res.status(500).json({ 
-                error: 'Server configuration error',
-                message: 'API key not configured'
+                error: 'Server configuration error'
             });
         }
-
+        
         const response = await fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+            `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
         );
         
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('OpenWeatherMap API error:', errorText);
+            console.error('Forecast API error:', errorText);
             
             return res.status(response.status).json({
-                error: 'Weather API error',
-                message: 'Failed to fetch weather data'
+                error: 'Forecast API error'
             });
         }
         
         const data = await response.json();
 
-        const formattedData = {
-            name: data.name,
-            country: data.sys.country,
-            temp: data.main.temp,
-            feelsLike: data.main.feels_like,
-            humidity: data.main.humidity,
-            pressure: data.main.pressure,
-            visibility: data.visibility / 1000, 
-            windSpeed: data.wind.speed,
-            windDeg: data.wind.deg,
-            clouds: data.clouds.all,
-            weather: data.weather[0],
-            sunrise: data.sys.sunrise,
-            sunset: data.sys.sunset,
-            timezone: data.timezone,
-            alerts: data.alerts || []
-        };
-        
-        return res.status(200).json(formattedData);
+        return res.status(200).json(data);
         
     } catch (error) {
         console.error('Server error:', error);
         
         return res.status(500).json({ 
-            error: 'Internal server error',
-            message: 'An unexpected error occurred'
+            error: 'Internal server error'
         });
     }
 }
