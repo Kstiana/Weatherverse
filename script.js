@@ -232,7 +232,7 @@ function applySettings() {
     document.getElementById('animationsToggle').checked = state.settings.animations;
     document.getElementById('autoRefreshToggle').checked = state.settings.autoRefresh;
     document.getElementById('notificationsToggle').checked = state.settings.notifications;
-    document.getElementById('apiKeyInput').value = state.settings.apiKey || '';
+    
 }
 
 function setupEventListeners() {
